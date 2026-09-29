@@ -1,0 +1,13 @@
+{
+  "name": "elastic-observability-preso",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "serve": "fslides serve",
+    "pdf": "fslides pdf",
+    "pptx": "fslides pptx",
+    "export": "fslides export",
+    "build": "fslides build",
+    "publish": "fslides publish"
+  }
+}

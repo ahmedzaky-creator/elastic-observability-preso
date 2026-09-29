@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Challenge</title>
+<link rel="stylesheet" href="css/eweb.css">
+<style>
+  h1{font-size:40px;letter-spacing:-1.4px;max-width:1140px;white-space:nowrap}
+  #ch{position:absolute;left:72px;top:176px;width:1136px;height:400px;z-index:1}
+  .an{position:absolute;z-index:3;text-align:right;opacity:0;transition:opacity .5s,transform .5s;transform:translateY(6px)}
+  .an.on{opacity:1;transform:none}
+  .an .m{font:500 46px/1 var(--sans);letter-spacing:-1.8px;color:var(--blue)}
+  .an .m.o{color:var(--orange)}
+  .an .t{font:500 11.5px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--char);margin-bottom:6px;max-width:330px;margin-left:auto}
+  .ai{position:absolute;z-index:3;font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--ink);padding:5px 10px}
+  .era{position:absolute;z-index:3;top:590px;font:500 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--grey)}
+  .tagm{position:absolute;z-index:3;font:600 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--grey);white-space:nowrap;background:#fff;padding:2px 6px;opacity:0;transition:opacity .4s}
+  .tagm.on{opacity:1}
+  .era{transition:opacity .5s}
+  .punch{position:absolute;z-index:3;left:72px;right:72px;top:626px;border-top:1px solid var(--ink);padding-top:12px;font-size:19px;color:var(--char)}
+  .punch b{color:var(--ink);font-weight:600}
+</style>
+</head>
+<body data-foot="none">
+<div class="z">
+  <div class="eyebrow in1">Observability · The AI Era</div>
+  <h1 class="in2">The challenge you know. <span class="b">At a scale you've never seen.</span></h1>
+</div>
+<canvas id="ch" width="1136" height="400"></canvas>
+<div class="an" id="a0"><div class="t">agents write code no one has read</div><div class="m">×100</div></div>
+<div class="an" id="a1"><div class="t">environments no one tracks</div><div class="m">×10</div></div>
+<div class="an" id="a2"><div class="t">incidents, with zero context and no runbook</div><div class="m o">?×</div></div>
+<div class="ai" id="ai" style="opacity:0;transition:opacity .4s">AI arrives</div>
+<div class="tagm" id="grow">Already growing</div>
+<div class="tagm" id="peak">Pre-AI peak</div>
+<div class="era" id="e0" style="left:92px">The world we built for · microservices, multi-cloud, cost</div>
+<div class="era" id="e1" style="right:72px;opacity:0">Telemetry, incidents and the bill</div>
+<div class="punch" id="punch" style="opacity:0;transition:opacity .6s">More signals, less context, a bigger bill. <b>Observability built for humans can't keep up.</b></div>
+<script src="js/eweb.js"></script>
+<script src="/js/fuckslides.js"></script>
+<script>
+(function(){
+  const cv = document.getElementById('ch'), W = 1136, H = 400, dpr = 2;
+  cv.width = W * dpr; cv.height = H * dpr; const c = cv.getContext('2d'); c.scale(dpr, dpr);
+  const X0 = 20, X1 = 1100, base = 360, top = 34, gap = 10, UA = .46;
+  // Illustrative volume curve: steady growth, then an AI-driven order of magnitude.
+  const v = u => u <= UA ? 1 + 9 * Math.pow(u / UA, 2.2) : 10 + 43 * (u - UA) + 92 * Math.pow((u - UA) / (1 - UA), 2.6);
+  const $ = id => document.getElementById(id), OX = 72, OY = 176;
+  const ann = [[.66, 'a0'], [.8, 'a1'], [.94, 'a2']];
+  const ease = EW.ease, io = t => t <= 0 ? 0 : t >= 1 ? 1 : t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const skip = navigator.webdriver ? 30 : 0;
+  EW.loop(t0 => {
+    const t = t0 + skip;
+    const r1 = UA * ease((t - .2) / 1.3);
+    const k2 = io((t - 2.7) / 2.1);
+    const rev = t < 2.7 ? r1 : UA + (1 - UA) * k2;
+    const D = Math.max(UA, rev), ymax = Math.max(11, v(rev) * 1.06);
+    const X = u => X0 + (X1 - X0) * (u / D), Y = val => base - (val / ymax) * (base - top);
+    c.clearRect(0, 0, W, H);
+    c.fillStyle = '#1D1E24'; c.fillRect(0, base, W, 1);
+    const wx = ((t * .25) % 1.4 - .2) * W;
+    for (let x = X0 + 4; x < X(rev); x += gap){
+      const u = (x - X0) / (X1 - X0) * D, cy = Y(v(u)), q = (x * 7919 % 97) / 97;
+      const cc = u < UA ? [181, 191, 206] : u < .86 ? [11, 100, 221] : [255, 126, 98];
+      const kk = Math.max(0, 1 - Math.abs(x - wx) / 80) * q;
+      for (let y = base - 4; y > cy + 3; y -= gap){
+        const a = u < UA ? .9 : .55 + .45 * (1 - (y - cy) / (base - cy + 1));
+        c.fillStyle = `rgba(${cc},${Math.min(1, a + kk * .4)})`; c.beginPath(); c.arc(x, y, 1.5 + kk * .8, 0, 6.283); c.fill();
+      }
+    }
+    const py = Y(10);
+    c.setLineDash([3, 4]); c.strokeStyle = 'rgba(29,30,36,.55)'; c.lineWidth = 1;
+    if (rev >= UA * .98){ c.beginPath(); c.moveTo(X0, py); c.lineTo(X1, py); c.stroke(); }
+    if (t > 2.6){ const ax = X(UA); c.strokeStyle = '#1D1E24'; c.beginPath(); c.moveTo(ax, py); c.lineTo(ax, base); c.stroke(); }
+    c.setLineDash([]);
+    c.beginPath(); for (let i = 0; i <= 400; i++){ const u = rev * i / 400, x = X(u), y = Y(v(u)); i ? c.lineTo(x, y) : c.moveTo(x, y); }
+    c.strokeStyle = '#1D1E24'; c.lineWidth = 2; c.stroke();
+    if (rev < 1){ c.fillStyle = rev < UA ? '#69707D' : '#0B64DD'; c.beginPath(); c.arc(X(rev), Y(v(rev)), 4, 0, 6.283); c.fill(); }
+    const pk = $('peak'); pk.classList.toggle('on', rev >= UA * .98); pk.style.left = (OX + X0 + 6) + 'px'; pk.style.top = (OY + py - 22) + 'px';
+    const g = $('grow'); g.classList.toggle('on', t > 1.3 && t < 2.8); g.style.left = (OX + X(UA * .72) - 150) + 'px'; g.style.top = (OY + Y(v(UA * .72)) - 10) + 'px';
+    const ai = $('ai'); ai.style.opacity = t > 2.2 ? 1 : 0; ai.style.left = (OX + Math.min(X(UA), X1 - 50) - 44) + 'px'; ai.style.top = (OY + base + 12) + 'px';
+    $('e1').style.opacity = t > 3.4 ? 1 : 0;
+    ann.forEach(([u, id], i) => {
+      const e = $(id), on = rev >= u && k2 >= 1; e.classList.toggle('on', on);
+      if (!on) return;
+      const x = X(u), y = Y(v(u));
+      e.style.right = (1280 - OX - x + 26) + 'px'; e.style.top = (OY + y - e.offsetHeight + 23) + 'px';
+      c.strokeStyle = '#1D1E24'; c.lineWidth = 1; c.beginPath(); c.moveTo(x - 20, y); c.lineTo(x - 6, y); c.stroke();
+      c.fillStyle = '#fff'; c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, 5, 0, 6.283); c.fill(); c.stroke();
+      c.fillStyle = i === 2 ? '#FF7E62' : '#0B64DD'; c.beginPath(); c.arc(x, y, 2.5, 0, 6.283); c.fill();
+    });
+    $('punch').style.opacity = t > 5.2 ? 1 : 0;
+  });
+})();
+</script>
+</body>
+</html>
